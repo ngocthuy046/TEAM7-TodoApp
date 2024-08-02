@@ -13,64 +13,88 @@ document.addEventListener("DOMContentLoaded", function () {
     filter.addEventListener("change", renderList);
 
     function addOrEditTask() {
-        const taskName = taskNameInput.value.trim();
-        if (taskName) {
-            if (editingIndex === -1) {
-                todos.push({ name: taskName, done: false });
-            } else {
-                todos[editingIndex].name = taskName;
-                editingIndex = -1;
-                addTaskButton.textContent = "Add";
-            }
-            taskNameInput.value = "";
-            renderList();
+      const taskName = taskNameInput.value.trim();
+      if (taskName) {
+        if (editingIndex === -1) {
+          todos.push({ name: taskName, done: false });
+        } else {
+          todos[editingIndex].name = taskName;
+          editingIndex = -1;
+          addTaskButton.textContent = "Add";
         }
+        taskNameInput.value = "";
+        renderList();
+      }
     }
 
     function cancelEdit() {
-        taskNameInput.value = "";
-        editingIndex = -1;
-        addTaskButton.textContent = "Add";
+      taskNameInput.value = "";
+      editingIndex = -1;
+      addTaskButton.textContent = "Add";
     }
 
     function editTask(index) {
-        taskNameInput.value = todos[index].name;
-        editingIndex = index;
-        addTaskButton.textContent = "Save";
+      taskNameInput.value = todos[index].name;
+      editingIndex = index;
+      addTaskButton.textContent = "Save";
     }
 
     function deleteTask(index) {
+      todos.splice(index, 1);
+      renderList();
+    }
+
+    function toggleTask(index) {
+        const selectedTodo = todos[index];
         todos.splice(index, 1);
+        selectedTodo.done = !selectedTodo.done;
+        todos.push(selectedTodo);
         renderList();
+    }
+    function getFilteredTodo() {
+        const filterSelect = document.getElementById('filter');
+        const filterValue = filterSelect.value;
+      
+        if (filterValue === 'all') {
+          return todos;
+        } else if (filterValue === 'done') {
+          return todos.filter(todo => todo.done);
+        } else {
+          return todos.filter(todo => !todo.done);
+        }
     }
 
     function renderList() {
-        const filterValue = filter.value;
-        todoList.innerHTML = "";
-        todos.forEach((todo, index) => {
-            if (
-                // filterValue === "all"
-                filterValue === "all" ||
-                (filterValue === "done" && todo.done) ||
-                (filterValue === "undone" && !todo.done)
-            ) {
-                const li = document.createElement("li");
-                li.innerHTML = `
-                  <input type="checkbox" class="check-box" onclick="toggleTask(${index})">
-                  <span>${todo.name}</span>
-                  <div>
-                      <button class="edit" onclick="editTask(${index})">Edit</button>
-                      <button class="delete" onclick="deleteTask(${index})">Delete</button>
-                  </div>
-                `
-                ;
-                todoList.appendChild(li);
-            }
-        });
+      const filterValue = filter.value;
+      const filteredTodos = getFilteredTodo();
+      todoList.innerHTML = "";
+      todos.forEach((todo, index) => {
+        if (
+          filterValue === "all" ||
+          (filterValue === "done" && todo.done) ||
+          (filterValue === "undone" && !todo.done)
+        ) {
+          const li = document.createElement("li");
+          li.className = todo.done ? "done" : "";
+          li.innerHTML = `
+            <input type="checkbox" class="check-box" onclick="toggleTask(${index})" ${
+            todo.done ? "checked" : "" 
+          }>
+            <span>${todo.name}</span>
+            <div>
+                <button class="edit" onclick="editTask(${index})">Edit</button>
+                <button class="delete" onclick="deleteTask(${index})">Delete</button>
+            </div>
+          `;
+          todoList.appendChild(li);
+        }
+      });
     }
 
     window.editTask = editTask;
     window.deleteTask = deleteTask;
+    
+    window.toggleTask = toggleTask;
 
     renderList();
-});
+  });
