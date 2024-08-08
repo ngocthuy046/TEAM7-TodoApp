@@ -39,7 +39,7 @@ span {
     height: 20px;
 }
 
-.todoAdd {
+.task__input-container {
     display: flex;
     flex-direction: row;
     margin-top: 16px;
@@ -47,7 +47,7 @@ span {
     gap: 4px;
 }
 
-#taskName {
+#task-name {
     display: block;
     width: 100%;
     margin-right: 12px;
