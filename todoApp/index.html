@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TODO APP</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="header">
-        <img src="https://cdn-icons-png.freepik.com/512/5290/5290594.png" alt="todo-icon"; class="header-icon">
+        <img src="https://cdn-icons-png.freepik.com/512/5290/5290594.png" alt="todo-icon" ; class="header-icon">
         <div>
             <h2>Todo App</h2>
             <p>Manage your work every day</p>
@@ -17,26 +19,22 @@
     <hr>
     <div class="task__input-container">
         <input type="text" id="task-name" placeholder="Enter your task here">
-        <button id="create-task" > Add </button>
-        <button id="cancel"> Cancel </button>
+        <button id="save-change" style="display: none;"> Save </button>
+        <button id="create-task"> Add </button>
+        <button id="cancel-all-change"> Cancel </button>
     </div>
     <ul id="todo-list">
-        <!-- <li class="checked">
-            <input type="checkbox" class="check-box" checked onclick="toggleTask">
-            <span> Task </span>
-        </li>
-        <li> <span> Task </span> </li>
-        <li> <span> Task </span> </li> -->
     </ul>
     <hr>
     <div class="filter-container">
         <label for="filter"> Filter: </label>
         <select name="filter" id="filter">
-            <option value="all"> All </option>
-            <option value="done"> Done </option>
-            <option value="undone"> Undone </option>
+            <option value="all" id="all"> All </option>
+            <option value="done" id="done"> Done </option>
+            <option value="undone" id="undone"> Undone </option>
         </select>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>

@@ -1,69 +1,106 @@
 document.addEventListener("DOMContentLoaded", function () {
     let todos = [];
-    let editingIndex = -1;
 
-    const taskNameInput = document.getElementById("taskName");
-    const addTaskButton = document.getElementById("addTask");
-    const cancelEditButton = document.getElementById("cancelEdit");
-    const todoList = document.getElementById("todoList");
+    const taskNameInput = document.getElementById("task-name");
+    const createButton = document.getElementById("create-task");
+    const cancelButton = document.getElementById("cancel-all-change");
+    const todoList = document.getElementById("todo-list");
+
     const filter = document.getElementById("filter");
+    const filterValueIsAll = 'all'
+    const filterValueIsDone = 'done'
+    const filterValueIsUndone = 'undone'
 
-    addTaskButton.addEventListener("click", addOrEditTask);
-    cancelEditButton.addEventListener("click", cancelEdit);
-    filter.addEventListener("change", renderList);
 
-    function addOrEditTask() {
+    createButton.addEventListener("click", addTask);
+    cancelButton.addEventListener("click", cancelAllChange);
+    filter.addEventListener("change", renderTodoList);
+
+    function addTask() {
         const taskName = taskNameInput.value.trim();
-        if (taskName) {
-            if (editingIndex === -1) {
-                todos.push({ name: taskName, done: false });
-            } else {
-                todos[editingIndex].name = taskName;
-                editingIndex = -1;
-                addTaskButton.textContent = "Add";
-            }
-            taskNameInput.value = "";
-            renderList();
+        if (taskName === '') {
+            return 'Please input a task'
+        } else {
+            todos.push(
+                {
+                    name: taskName,
+                    done: false
+                }
+            )
         }
+        taskNameInput.value = "";
+        renderTodoList()
     }
 
-    function cancelEdit() {
+    function cancelAllChange() {
         taskNameInput.value = "";
-        editingIndex = -1;
-        addTaskButton.textContent = "Add";
+        currentEditingIndex = null;
+        createButton.textContent = addTaskLabel;
     }
 
     function editTask(index) {
-        taskNameInput.value = todos[index].name;
-        editingIndex = index;
-        addTaskButton.textContent = "Save";
+        const editItem = document.querySelector(`.taskName-${index}`)
+        const editingValue = editItem.innerHTML
+        const inputElement = document.createElement('input')
+        inputElement.value = editingValue
+        editItem.replaceWith(inputElement)
+        inputElement.focus()
+        inputElement.addEventListener("blur", () => {
+            const updateValue = inputElement.value.trim()
+            if (updateValue) {
+                todos[index].name = updateValue
+                renderTodoList()
+            }
+        })
     }
+
 
     function deleteTask(index) {
         todos.splice(index, 1);
-        renderList();
+        renderTodoList();
     }
 
-    function renderList() {
-        const filterValue = filter.value;
+    function toggleTask(index) {
+        const selectedTodo = todos[index];
+        todos.splice(index, 1);
+        selectedTodo.done = !selectedTodo.done;
+        todos.push(selectedTodo);
+        renderTodoList();
+    }
+    function getFilteredTodo() {
+        const filteredTask = document.getElementById('filter');
+        const filterValueOfTask = filteredTask.value;
+
+        if (filterValueOfTask === filterValueIsAll) {
+            return todos;
+        } else if (filterValueOfTask === filterValueIsDone) {
+            return todos.filter(todo => todo.done);
+        } else {
+            return todos.filter(todo => !todo.done);
+        }
+    }
+
+    function renderTodoList() {
+        const filterValueOfTask = filter.value;
+        getFilteredTodo();
         todoList.innerHTML = "";
         todos.forEach((todo, index) => {
             if (
-                // filterValue === "all"
-                filterValue === "all" ||
-                (filterValue === "done" && todo.done) ||
-                (filterValue === "undone" && !todo.done)
+                filterValueOfTask === filterValueIsAll ||
+                (filterValueOfTask === filterValueIsDone && todo.done) ||
+                (filterValueOfTask === filterValueIsUndone && !todo.done)
             ) {
                 const li = document.createElement("li");
+                li.className = todo.done ? "done" : "";
                 li.innerHTML = `
-                  <input type="checkbox" class="check-box" onclick="toggleTask(${index})">
-                  <span>${todo.name}</span>
-                  <div>
-                      <button class="edit" onclick="editTask(${index})">Edit</button>
-                      <button class="delete" onclick="deleteTask(${index})">Delete</button>
-                  </div>
-                `
-                ;
+            <input type="checkbox" class="check-box" onclick="toggleTask(${index})" ${todo.done ? "checked" : ""
+                    }>
+            <span class="taskName-${index}">${todo.name}</span>
+            <div>
+                <button class="edit" onclick="editTask(${index})">Edit</button>
+                <button class="delete" onclick="deleteTask(${index})">Delete</button>
+            </div>
+          `;
                 todoList.appendChild(li);
             }
         });
@@ -71,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.editTask = editTask;
     window.deleteTask = deleteTask;
+    window.toggleTask = toggleTask;
 
-    renderList();
+    renderTodoList();
 });
