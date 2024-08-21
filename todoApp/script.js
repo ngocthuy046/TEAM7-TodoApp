@@ -7,9 +7,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const todoList = document.getElementById("todo-list");
 
     const filter = document.getElementById("filter");
-    const filterValueIsAll = 'all'
-    const filterValueIsDone = 'done'
-    const filterValueIsUndone = 'undone'
+    const filterValueIsAll = "all"
+    const filterValueIsDone = "done"
+    const filterValueIsUndone = "undone"
 
 
     createButton.addEventListener("click", addTask);
@@ -18,18 +18,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function addTask() {
         const taskName = taskNameInput.value.trim();
-        if (taskName === '') {
-            return 'Please input a task'
+        if (taskName === "") {
+            alert("Please input a task");
+            return;
         } else {
-            todos.push(
-                {
-                    name: taskName,
-                    done: false
-                }
-            )
+            todos.unshift({
+                name: taskName,
+                done: false
+            });
         }
         taskNameInput.value = "";
-        renderTodoList()
+        renderTodoList(); 
     }
 
     function cancelAllChange() {
@@ -41,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function editTask(index) {
         const editItem = document.querySelector(`.taskName-${index}`)
         const editingValue = editItem.innerHTML
-        const inputElement = document.createElement('input')
+        const inputElement = document.createElement("input")
         inputElement.value = editingValue
         editItem.replaceWith(inputElement)
         inputElement.focus()
@@ -67,8 +66,9 @@ document.addEventListener("DOMContentLoaded", function () {
         todos.push(selectedTodo);
         renderTodoList();
     }
-    function getFilteredTodo() {
-        const filteredTask = document.getElementById('filter');
+    
+    function getFilteredTodos() {
+        const filteredTask = document.getElementById("filter");
         const filterValueOfTask = filteredTask.value;
 
         if (filterValueOfTask === filterValueIsAll) {
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderTodoList() {
         const filterValueOfTask = filter.value;
-        getFilteredTodo();
+        getFilteredTodos();
         todoList.innerHTML = "";
         todos.forEach((todo, index) => {
             if (
