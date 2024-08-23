@@ -5,12 +5,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const createButton = document.getElementById("create-task");
     const cancelButton = document.getElementById("cancel-all-change");
     const todoList = document.getElementById("todo-list");
-
     const filter = document.getElementById("filter");
-    const filterValueIsAll = "all"
-    const filterValueIsDone = "done"
-    const filterValueIsUndone = "undone"
-
+    
+    const todoFilterValues = Object.freeze({
+        ALL: "all",
+        DONE: "done",
+        UNDONE: "undone"
+    });
 
     createButton.addEventListener("click", addTask);
     cancelButton.addEventListener("click", cancelAllChange);
@@ -53,7 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     }
 
-
     function deleteTask(index) {
         todos.splice(index, 1);
         renderTodoList();
@@ -71,13 +71,27 @@ document.addEventListener("DOMContentLoaded", function () {
         const filteredTask = document.getElementById("filter");
         const filterValueOfTask = filteredTask.value;
 
-        if (filterValueOfTask === filterValueIsAll) {
+        if (filterValueOfTask === todoFilterValues.ALL) {
             return todos;
-        } else if (filterValueOfTask === filterValueIsDone) {
+        } 
+        if (filterValueOfTask === todoFilterValues.DONE) {
             return todos.filter(todo => todo.done);
         } else {
             return todos.filter(todo => !todo.done);
         }
+    }
+
+    function displayTodo(todo, filterValueOfTask) {
+        if (filterValueOfTask === todoFilterValues.ALL) {
+            return true;
+        }
+        if (filterValueOfTask === todoFilterValues.DONE) {
+            return true;
+        }
+        if ( filterValueOfTask === todoFilterValues.UNDONE ) {
+            return true;
+        } 
+        return false;
     }
 
     function renderTodoList() {
@@ -85,11 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
         getFilteredTodos();
         todoList.innerHTML = "";
         todos.forEach((todo, index) => {
-            if (
-                filterValueOfTask === filterValueIsAll ||
-                (filterValueOfTask === filterValueIsDone && todo.done) ||
-                (filterValueOfTask === filterValueIsUndone && !todo.done)
-            ) {
+            if (displayTodo(todo, filterValueOfTask)) {
                 const li = document.createElement("li");
                 li.className = todo.done ? "done" : "";
                 li.innerHTML = `
@@ -112,3 +122,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     renderTodoList();
 });
+
